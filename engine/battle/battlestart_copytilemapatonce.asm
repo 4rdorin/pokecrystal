@@ -1,0 +1,2 @@
+BattleStart_CopyTilemapAtOnce:
+	jmp CGBOnly_CopyTilemapAtOnce

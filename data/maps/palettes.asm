@@ -1,0 +1,344 @@
+SpecialOBPalettes:
+MACRO special_ob_pal
+	map_id \1 				; map id
+	dw wOBPals1 palette \2 	; destination
+	dw \3 					; new palette
+ENDM
+
+;				   map,					dst palette,	new palette
+	special_ob_pal SAFARI_ZONE_AREA_2,	PAL_OW_TREE,	SandPalette
+	special_ob_pal SAFARI_ZONE_AREA_3,	PAL_OW_TREE,	SwampPalette
+	special_ob_pal POWER_PLANT_B1F,		PAL_OW_ROCK,	YellowPalette
+	special_ob_pal VERMILION_CITY,		PAL_OW_ROCK,	GrayPalette
+	special_ob_pal CERULEAN_CAVE_B1F,	PAL_OW_TREE,	PurplePalette
+	special_ob_pal SAFARI_ZONE_GATE,	PAL_OW_ROCK,	PinkPalette
+	db 0 ; end
+
+SpecialFollowerPalettes:
+MACRO special_fol_pal
+	db \1 					; follower palette number
+	dw \2 					; follower palette
+ENDM
+
+;				    # palette,			new palette
+	special_fol_pal PAL_FOL_GREEN,		GreenPalette
+	special_fol_pal PAL_FOL_BROWN,		BrownPalette
+	special_fol_pal PAL_FOL_YELLOW,		YellowPalette
+	special_fol_pal PAL_FOL_PURPLE,		PurplePalette
+	special_fol_pal PAL_FOL_GRAY,		GrayPalette
+	special_fol_pal PAL_FOL_PINK,		PinkPalette
+	special_fol_pal PAL_FOL_SUICUNE,	SuicunePalette
+	special_fol_pal PAL_FOL_DRAGONITE,	DragonitePalette
+	special_fol_pal PAL_FOL_TYRANITAR,	TyranitarPalette
+	special_fol_pal PAL_FOL_STEELIX,	SteelixPalette
+	special_fol_pal PAL_FOL_CELEBI,		CelebiPalette
+	special_fol_pal PAL_FOL_BULBASAUR,	BulbasaurPalette
+	special_fol_pal PAL_FOL_VENUSAUR,	VenusaurPalette
+	special_fol_pal PAL_FOL_ODDISH,		OddishPalette
+	special_fol_pal PAL_FOL_GLOOM,		GloomPalette
+	special_fol_pal PAL_FOL_VILEPLUME,	VileplumePalette
+	special_fol_pal PAL_FOL_POLIWAG,	PoliwagPalette
+	special_fol_pal PAL_FOL_BELLOSSOM,	BellossomPalette
+	special_fol_pal PAL_FOL_TENTACOOL,	TentacoolPalette
+	special_fol_pal PAL_FOL_ESPEON,		EspeonPalette
+	special_fol_pal PAL_FOL_GENGAR,		GengarPalette
+	special_fol_pal PAL_FOL_PORYGON,	PorygonPalette
+	special_fol_pal PAL_FOL_TYROGUE,	TyroguePalette
+	special_fol_pal PAL_FOL_HITMONCHAN,	HitmonchanPalette
+	special_fol_pal PAL_FOL_HITMONTOP,	HitmontopPalette
+	special_fol_pal PAL_FOL_BLISSEY,	BlisseyPalette
+	special_fol_pal PAL_FOL_STARMIE,	StarmiePalette
+	special_fol_pal PAL_FOL_AERODACTYL,	AerodactylPalette
+	special_fol_pal PAL_FOL_SNORLAX,	SnorlaxPalette
+	special_fol_pal PAL_FOL_ARTICUNO,	ArticunoPalette
+	special_fol_pal PAL_FOL_TOGEPI,		TogepiPalette
+	special_fol_pal PAL_FOL_HOPPIP,		HoppipPalette
+	special_fol_pal PAL_FOL_FORRETRESS,	ForretressPalette
+	special_fol_pal PAL_FOL_MISDREAVUS,	MisdreavusPalette
+	special_fol_pal PAL_FOL_GLIGAR,		GligarPalette
+	special_fol_pal PAL_FOL_DUNSPARCE,	DunsparcePalette
+	special_fol_pal PAL_FOL_PHANPY,		PhanpyPalette
+	special_fol_pal PAL_FOL_SKARMORY,	SkarmoryPalette
+	special_fol_pal PAL_FOL_RAIKOU,		RaikouPalette
+	special_fol_pal PAL_FOL_ENTEI,		EnteiPalette
+	special_fol_pal PAL_FOL_MEWTWO,		MewtwoPalette
+	special_fol_pal PAL_FOL_MEW,		MewPalette
+	special_fol_pal PAL_FOL_HOOH,		HoOhPalette
+	special_fol_pal PAL_FOL_LUGIA,		LugiaPalette
+	db 0 ; end
+
+GreenPalette:
+	RGB 28,31,16, 31,19,10, 07,23,03, 00,00,00
+	RGB 27,31,27, 31,19,10, 07,23,03, 00,00,00
+	RGB 15,14,24, 31,19,10, 07,23,03, 00,00,00
+	RGB 01,01,02, 31,19,10, 07,23,03, 00,00,00
+
+BrownPalette:
+	RGB 28,31,16, 31,19,10, 15,10,03, 00,00,00
+	RGB 27,31,27, 31,19,10, 15,10,03, 00,00,00
+	RGB 15,14,24, 31,19,10, 15,10,03, 00,00,00
+	RGB 01,01,02, 31,19,10, 15,10,03, 00,00,00
+
+YellowPalette:
+	RGB 28,31,16, 30,30,06, 30,17,00, 00,00,00
+	RGB 27,31,27, 30,30,06, 30,17,00, 00,00,00
+	RGB 15,14,24, 30,30,06, 30,17,00, 00,00,00
+	RGB 01,01,02, 30,30,06, 30,17,00, 00,00,00
+
+PurplePalette:
+	RGB 28,31,16, 31,19,10, 18,00,18, 00,00,00
+	RGB 27,31,27, 31,19,10, 18,00,18, 00,00,00
+	RGB 15,14,24, 31,19,10, 18,00,18, 00,00,00
+	RGB 01,01,02, 31,19,10, 18,00,18, 00,00,00
+
+GrayPalette:
+	RGB 28,31,16, 31,19,10, 11,14,15, 00,00,00
+	RGB 27,31,27, 31,19,10, 11,14,15, 00,00,00
+	RGB 15,14,24, 31,19,10, 11,14,15, 00,00,00
+	RGB 01,01,02, 31,19,10, 11,14,15, 00,00,00
+
+PinkPalette:
+	RGB 28,31,16, 31,19,10, 27,07,16, 00,00,00
+	RGB 27,31,27, 31,19,10, 27,07,16, 00,00,00
+	RGB 15,14,24, 31,19,10, 27,07,16, 00,00,00
+	RGB 01,01,02, 31,19,10, 27,07,16, 00,00,00
+
+SandPalette:
+	RGB 28,28,14, 26,20,00, 22,10,00, 07,07,07
+	RGB 30,29,18, 27,22,00, 23,12,00, 07,07,07
+	RGB 15,14,22, 11,07,00, 07,03,00, 00,00,00
+	RGB 01,01,02, 11,07,00, 07,03,00, 00,00,00
+
+SwampPalette:
+	RGB 15,20,16, 09,15,10, 04,12,08, 00,00,00
+	RGB 12,20,16, 08,16,12, 04,12,08, 00,00,00
+	RGB 07,15,16, 03,11,12, 00,07,08, 00,00,00
+	RGB 01,01,02, 03,11,12, 00,07,08, 00,00,00
+
+SuicunePalette:
+	RGB 28,31,16, 15,25,25, 16,00,16, 00,00,00
+	RGB 27,31,27, 15,25,25, 16,00,16, 00,00,00
+	RGB 15,14,24, 15,25,25, 16,00,16, 00,00,00
+	RGB 01,01,02, 15,25,25, 16,00,16, 00,00,00
+
+DragonitePalette:
+	RGB 28,31,16, 31,22,10, 29,19,07, 00,00,00
+	RGB 27,31,27, 31,22,10, 29,19,07, 00,00,00
+	RGB 15,14,24, 31,22,10, 29,19,07, 00,00,00
+	RGB 01,01,02, 31,22,10, 29,19,07, 00,00,00
+
+TyranitarPalette:
+	RGB 28,31,16, 21,24,26, 07,23,03, 00,00,00
+	RGB 27,31,27, 21,24,26, 07,23,03, 00,00,00
+	RGB 15,14,24, 21,24,26, 07,23,03, 00,00,00
+	RGB 01,01,02, 21,24,26, 07,23,03, 00,00,00
+
+SteelixPalette:
+	RGB 28,31,16, 13,13,13, 19,19,22, 00,00,00
+	RGB 27,31,27, 13,13,13, 19,19,22, 00,00,00
+	RGB 15,14,24, 13,13,13, 19,19,22, 00,00,00
+	RGB 01,01,02, 13,13,13, 19,19,22, 00,00,00
+
+CelebiPalette:
+	RGB 28,31,16, 18,31,01, 07,23,03, 00,00,00
+	RGB 27,31,27, 18,31,01, 07,23,03, 00,00,00
+	RGB 15,14,24, 18,31,01, 07,23,03, 00,00,00
+	RGB 01,01,02, 18,31,01, 07,23,03, 00,00,00
+
+BulbasaurPalette:
+	RGB 28,31,16, 20,26,08, 12,16,22, 00,00,00
+	RGB 27,31,27, 20,26,08, 12,16,22, 00,00,00
+	RGB 15,14,24, 20,26,08, 12,16,22, 00,00,00
+	RGB 01,01,02, 20,26,08, 12,16,22, 00,00,00
+
+VenusaurPalette:
+	RGB 28,31,16, 29,07,14, 07,23,03, 00,00,00
+	RGB 27,31,27, 29,07,14, 07,23,03, 00,00,00
+	RGB 15,14,24, 29,07,14, 07,23,03, 00,00,00
+	RGB 01,01,02, 29,07,14, 07,23,03, 00,00,00
+
+OddishPalette:
+	RGB 28,31,16, 07,23,03, 00,00,00, 00,00,00
+	RGB 27,31,27, 07,23,03, 00,00,00, 00,00,00
+	RGB 15,14,24, 07,23,03, 00,00,00, 00,00,00
+	RGB 01,01,02, 07,23,03, 00,00,00, 00,00,00
+
+GloomPalette:
+	RGB 28,31,16, 31,12,00, 09,08,13, 00,00,00
+	RGB 27,31,27, 31,12,00, 09,08,13, 00,00,00
+	RGB 15,14,24, 31,12,00, 09,08,13, 00,00,00
+	RGB 01,01,02, 31,12,00, 09,08,13, 00,00,00
+
+VileplumePalette:
+	RGB 28,31,16, 31,06,03, 00,00,00, 00,00,00
+	RGB 27,31,27, 31,06,03, 00,00,00, 00,00,00
+	RGB 15,14,24, 31,06,03, 00,00,00, 00,00,00
+	RGB 01,01,02, 31,06,03, 00,00,00, 00,00,00
+
+PoliwagPalette:
+	RGB 28,31,16, 31,31,31, 12,12,24, 00,00,00
+	RGB 27,31,27, 31,31,31, 12,12,24, 00,00,00
+	RGB 15,14,24, 31,31,31, 12,12,24, 00,00,00
+	RGB 01,01,02, 31,31,31, 12,12,24, 00,00,00
+
+BellossomPalette:
+	RGB 28,31,16, 30,13,00, 07,23,03, 00,00,00
+	RGB 27,31,27, 30,13,00, 07,23,03, 00,00,00
+	RGB 15,14,24, 30,13,00, 07,23,03, 00,00,00
+	RGB 01,01,02, 30,13,00, 07,23,03, 00,00,00
+
+TentacoolPalette:
+	RGB 28,31,16, 31,07,01, 10,09,31, 00,00,00
+	RGB 27,31,27, 31,07,01, 10,09,31, 00,00,00
+	RGB 15,14,24, 31,07,01, 10,09,31, 00,00,00
+	RGB 01,01,02, 31,07,01, 10,09,31, 00,00,00
+
+EspeonPalette:
+	RGB 28,31,16, 25,15,26, 18,05,13, 00,00,00
+	RGB 27,31,27, 25,15,26, 18,05,13, 00,00,00
+	RGB 15,14,24, 25,15,26, 18,05,13, 00,00,00
+	RGB 01,01,02, 25,15,26, 18,05,13, 00,00,00
+
+GengarPalette:
+	RGB 28,31,16, 31,31,31, 31,07,01, 00,00,00
+	RGB 27,31,27, 31,31,31, 31,07,01, 00,00,00
+	RGB 15,14,24, 31,31,31, 31,07,01, 00,00,00
+	RGB 01,01,02, 31,31,31, 31,07,01, 00,00,00
+
+PorygonPalette:
+	RGB 28,31,16, 11,21,24, 26,12,14, 00,00,00
+	RGB 27,31,27, 11,21,24, 26,12,14, 00,00,00
+	RGB 15,14,24, 11,21,24, 26,12,14, 00,00,00
+	RGB 01,01,02, 11,21,24, 26,12,14, 00,00,00
+
+TyroguePalette:
+	RGB 28,31,16, 17,07,03, 23,15,18, 00,00,00
+	RGB 27,31,27, 17,07,03, 23,15,18, 00,00,00
+	RGB 15,14,24, 17,07,03, 23,15,18, 00,00,00
+	RGB 01,01,02, 17,07,03, 23,15,18, 00,00,00
+
+HitmonchanPalette:
+	RGB 28,31,16, 22,16,09, 26,06,12, 00,00,00
+	RGB 27,31,27, 22,16,09, 26,06,12, 00,00,00
+	RGB 15,14,24, 22,16,09, 26,06,12, 00,00,00
+	RGB 01,01,02, 22,16,09, 26,06,12, 00,00,00
+
+HitmontopPalette:
+	RGB 28,31,16, 24,19,04, 10,10,21, 00,00,00
+	RGB 27,31,27, 24,19,04, 10,10,21, 00,00,00
+	RGB 15,14,24, 24,19,04, 10,10,21, 00,00,00
+	RGB 01,01,02, 24,19,04, 10,10,21, 00,00,00
+
+BlisseyPalette:
+	RGB 28,31,16, 31,21,24, 30,28,29, 00,00,00
+	RGB 27,31,27, 31,21,24, 30,28,29, 00,00,00
+	RGB 15,14,24, 31,21,24, 30,28,29, 00,00,00
+	RGB 01,01,02, 31,21,24, 30,28,29, 00,00,00
+
+StarmiePalette:
+	RGB 28,31,16, 23,10,14, 18,00,18, 00,00,00
+	RGB 27,31,27, 23,10,14, 18,00,18, 00,00,00
+	RGB 15,14,24, 23,10,14, 18,00,18, 00,00,00
+	RGB 01,01,02, 23,10,14, 18,00,18, 00,00,00
+
+AerodactylPalette:
+	RGB 28,31,16, 14,10,18, 21,21,26, 00,00,00
+	RGB 27,31,27, 14,10,18, 21,21,26, 00,00,00
+	RGB 15,14,24, 14,10,18, 21,21,26, 00,00,00
+	RGB 01,01,02, 14,10,18, 21,21,26, 00,00,00
+
+SnorlaxPalette:
+	RGB 28,31,16, 31,19,10, 02,07,16, 00,00,00
+	RGB 27,31,27, 31,19,10, 02,07,16, 00,00,00
+	RGB 15,14,24, 31,19,10, 02,07,16, 00,00,00
+	RGB 01,01,02, 31,19,10, 02,07,16, 00,00,00
+
+ArticunoPalette:
+	RGB 28,31,16, 13,21,30, 00,12,19, 00,00,00
+	RGB 27,31,27, 13,21,30, 00,12,19, 00,00,00
+	RGB 15,14,24, 13,21,30, 00,12,19, 00,00,00
+	RGB 01,01,02, 13,21,30, 00,12,19, 00,00,00
+
+TogepiPalette:
+	RGB 28,31,16, 31,29,23, 31,06,17, 00,00,00
+	RGB 27,31,27, 31,29,23, 31,06,17, 00,00,00
+	RGB 15,14,24, 31,29,23, 31,06,17, 00,00,00
+	RGB 01,01,02, 31,29,23, 31,06,17, 00,00,00
+
+HoppipPalette:
+	RGB 28,31,16, 11,23,06, 21,06,07, 00,00,00
+	RGB 27,31,27, 11,23,06, 21,06,07, 00,00,00
+	RGB 15,14,24, 11,23,06, 21,06,07, 00,00,00
+	RGB 01,01,02, 11,23,06, 21,06,07, 00,00,00
+
+ForretressPalette:
+	RGB 28,31,16, 19,15,17, 20,03,08, 00,00,00
+	RGB 27,31,27, 19,15,17, 20,03,08, 00,00,00
+	RGB 15,14,24, 19,15,17, 20,03,08, 00,00,00
+	RGB 01,01,02, 19,15,17, 20,03,08, 00,00,00
+
+MisdreavusPalette:
+	RGB 28,31,16, 30,06,19, 09,09,17, 00,00,00
+	RGB 27,31,27, 30,06,19, 09,09,17, 00,00,00
+	RGB 15,14,24, 30,06,19, 09,09,17, 00,00,00
+	RGB 01,01,02, 30,06,19, 09,09,17, 00,00,00
+
+GligarPalette:
+	RGB 28,31,16, 08,07,20, 25,06,18, 00,00,00
+	RGB 27,31,27, 08,07,20, 25,06,18, 00,00,00
+	RGB 15,14,24, 08,07,20, 25,06,18, 00,00,00
+	RGB 01,01,02, 08,07,20, 25,06,18, 00,00,00
+
+DunsparcePalette:
+	RGB 28,31,16, 30,28,15, 06,17,20, 00,00,00
+	RGB 27,31,27, 30,28,15, 06,17,20, 00,00,00
+	RGB 15,14,24, 30,28,15, 06,17,20, 00,00,00
+	RGB 01,01,02, 30,28,15, 06,17,20, 00,00,00
+
+PhanpyPalette:
+	RGB 28,31,16, 23,09,06, 17,20,26, 00,00,00
+	RGB 27,31,27, 23,09,06, 17,20,26, 00,00,00
+	RGB 15,14,24, 23,09,06, 17,20,26, 00,00,00
+	RGB 01,01,02, 23,09,06, 17,20,26, 00,00,00
+
+SkarmoryPalette:
+	RGB 28,31,16, 19,13,31, 17,07,04, 00,00,00
+	RGB 27,31,27, 19,13,31, 17,07,04, 00,00,00
+	RGB 15,14,24, 19,13,31, 17,07,04, 00,00,00
+	RGB 01,01,02, 19,13,31, 17,07,04, 00,00,00
+
+RaikouPalette:
+	RGB 28,31,16, 31,31,00, 19,06,18, 00,00,00
+	RGB 27,31,27, 31,31,00, 19,06,18, 00,00,00
+	RGB 15,14,24, 31,31,00, 19,06,18, 00,00,00
+	RGB 01,01,02, 31,31,00, 19,06,18, 00,00,00
+
+EnteiPalette:
+	RGB 28,31,16, 31,29,29, 24,14,00, 00,00,00
+	RGB 27,31,27, 31,29,29, 24,14,00, 00,00,00
+	RGB 15,14,24, 31,29,29, 24,14,00, 00,00,00
+	RGB 01,01,02, 31,29,29, 24,14,00, 00,00,00
+
+MewtwoPalette:
+	RGB 28,31,16, 16,05,20, 22,20,25, 00,00,00
+	RGB 27,31,27, 16,05,20, 22,20,25, 00,00,00
+	RGB 15,14,24, 16,05,20, 22,20,25, 00,00,00
+	RGB 01,01,02, 16,05,20, 22,20,25, 00,00,00
+
+MewPalette:
+	RGB 28,31,16, 07,11,26, 31,15,31, 00,00,00
+	RGB 27,31,27, 07,11,26, 31,15,31, 00,00,00
+	RGB 15,14,24, 07,11,26, 31,15,31, 00,00,00
+	RGB 01,01,02, 07,11,26, 31,15,31, 00,00,00
+
+HoOhPalette:
+	RGB 28,31,16, 03,18,06, 31,07,00, 00,00,00
+	RGB 27,31,27, 03,18,06, 31,07,00, 00,00,00
+	RGB 15,14,24, 03,18,06, 31,07,00, 00,00,00
+	RGB 01,01,02, 03,18,06, 31,07,00, 00,00,00
+
+LugiaPalette:
+	RGB 28,31,16, 31,31,31, 10,00,31, 00,00,00
+	RGB 27,31,27, 31,31,31, 10,00,31, 00,00,00
+	RGB 15,14,24, 31,31,31, 10,00,31, 00,00,00
+	RGB 01,01,02, 31,31,31, 10,00,31, 00,00,00

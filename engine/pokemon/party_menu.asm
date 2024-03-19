@@ -1,0 +1,838 @@
+SelectMonFromParty:
+	call DisableSpriteUpdates
+	xor a
+	ld [wPartyMenuActionText], a
+	call ClearBGPalettes
+	call InitPartyMenuLayout
+	call WaitBGMap
+	call SetDefaultBGPAndOBP
+	call DelayFrame
+	call PartyMenuSelect
+	jmp ReturnToMapWithSpeechTextbox
+
+SelectTradeOrDayCareMon:
+	ld a, b
+	ld [wPartyMenuActionText], a
+	call DisableSpriteUpdates
+	call ClearBGPalettes
+	call InitPartyMenuLayout
+	call WaitBGMap
+	ld b, SCGB_PARTY_MENU
+	call GetSGBLayout
+	call SetDefaultBGPAndOBP
+	call DelayFrame
+	call PartyMenuSelect
+	jmp ReturnToMapWithSpeechTextbox
+
+InitPartyMenuLayout:
+	call LoadPartyMenuGFX
+	call InitPartyMenuWithCancel
+	call InitPartyMenuGFX
+	call WritePartyMenuTilemap
+	jmp PlacePartyMenuText
+
+LoadPartyMenuGFX:
+	call LoadStatusIconSet
+	call LoadFontsBattleExtra
+	farcall InitPartyMenuPalettes
+	farjp ClearSpriteAnims2
+
+WritePartyMenuTilemap:
+	ld hl, wOptions
+	ld a, [hl]
+	push af
+	set NO_TEXT_SCROLL, [hl]
+	xor a
+	ldh [hBGMapMode], a
+	hlcoord 0, 0
+	ld bc, SCREEN_WIDTH * SCREEN_HEIGHT
+	ld a, " "
+	rst ByteFill ; blank the tilemap
+	call GetPartyMenuQualityIndexes
+.loop
+	ld a, [hli]
+	cp -1
+	jr z, .end
+	push hl
+	ld hl, .Jumptable
+	call JumpTable
+	pop hl
+	jr .loop
+.end
+	pop af
+	ld [wOptions], a
+	ret
+
+.Jumptable:
+; entries correspond to PARTYMENUQUALITY_* constants
+	dw PlacePartyNicknames
+	dw PlacePartyHPBar
+	dw PlacePartyMenuHPDigits
+	dw PlacePartyMonLevel
+	dw PlacePartyMonStatus
+	dw PlacePartyMonTMHMCompatibility
+	dw PlacePartyMonEvoStoneCompatibility
+	dw PlacePartyMonGender
+
+PlacePartyNicknames:
+	hlcoord 3, 1
+	ld a, [wPartyCount]
+	and a
+	jr z, .end
+	ld c, a
+	ld b, 0
+.loop
+	push bc
+	push hl
+	push hl
+	ld hl, wPartyMonNicknames
+	ld a, b
+	call GetNickname
+	pop hl
+	rst PlaceString
+	pop hl
+	ld de, 2 * SCREEN_WIDTH
+	add hl, de
+	pop bc
+	inc b
+	dec c
+	jr nz, .loop
+
+.end
+	dec hl
+	dec hl
+	ld de, .CancelString
+	rst PlaceString
+	ret
+
+.CancelString:
+	db "CANCEL@"
+
+PlacePartyHPBar:
+	xor a
+	ld [wSGBPals], a
+	ld a, [wPartyCount]
+	and a
+	ret z
+	ld c, a
+	ld b, 0
+	hlcoord 11, 2
+.loop
+	push bc
+	push hl
+	call PartyMenuCheckEgg
+	jr z, .skip
+	push hl
+	call PlacePartymonHPBar
+	pop hl
+	ld d, $6
+	ld b, $0
+	call DrawBattleHPBar
+	ld hl, wHPPals
+	ld a, [wSGBPals]
+	ld c, a
+	ld b, 0
+	add hl, bc
+	call SetHPPal
+	ld b, SCGB_PARTY_MENU_HP_BARS
+	call GetSGBLayout
+.skip
+	ld hl, wSGBPals
+	inc [hl]
+	pop hl
+	ld de, 2 * SCREEN_WIDTH
+	add hl, de
+	pop bc
+	inc b
+	dec c
+	jr nz, .loop
+	ld b, SCGB_PARTY_MENU
+	jmp GetSGBLayout
+
+PlacePartymonHPBar:
+	ld a, b
+	ld bc, PARTYMON_STRUCT_LENGTH
+	ld hl, wPartyMon1HP
+	rst AddNTimes
+	ld a, [hli]
+	or [hl]
+	jr nz, .not_fainted
+	xor a
+	ld e, a
+	ld c, a
+	ret
+
+.not_fainted
+	dec hl
+	ld a, [hli]
+	ld b, a
+	ld a, [hli]
+	ld c, a
+	ld a, [hli]
+	ld d, a
+	ld a, [hli]
+	ld e, a
+	predef_jump ComputeHPBarPixels
+
+PlacePartyMenuHPDigits:
+	ld a, [wPartyCount]
+	and a
+	ret z
+	ld c, a
+	ld b, 0
+	hlcoord 13, 1
+.loop
+	push bc
+	push hl
+	call PartyMenuCheckEgg
+	jr z, .next
+	push hl
+	ld a, b
+	ld bc, PARTYMON_STRUCT_LENGTH
+	ld hl, wPartyMon1HP
+	rst AddNTimes
+	ld e, l
+	ld d, h
+	pop hl
+	push de
+	lb bc, 2, 3
+	call PrintNum
+	pop de
+	ld a, "/"
+	ld [hli], a
+	inc de
+	inc de
+	lb bc, 2, 3
+	call PrintNum
+
+.next
+	pop hl
+	ld de, 2 * SCREEN_WIDTH
+	add hl, de
+	pop bc
+	inc b
+	dec c
+	jr nz, .loop
+	ret
+
+PlacePartyMonLevel:
+	ld a, [wPartyCount]
+	and a
+	ret z
+	ld c, a
+	ld b, 0
+	hlcoord 8, 2
+.loop
+	push bc
+	push hl
+	call PartyMenuCheckEgg
+	jr z, .next
+	push hl
+	ld a, b
+	ld bc, PARTYMON_STRUCT_LENGTH
+	ld hl, wPartyMon1Level
+	rst AddNTimes
+	ld e, l
+	ld d, h
+	pop hl
+	ld a, [de]
+	cp 100 ; This is distinct from MAX_LEVEL.
+	jr nc, .ThreeDigits
+	ld a, "<LV>"
+	ld [hli], a
+	lb bc, PRINTNUM_LEFTALIGN | 1, 2
+	; jr .okay
+.ThreeDigits:
+	lb bc, PRINTNUM_LEFTALIGN | 1, 3
+; .okay
+	call PrintNum
+
+.next
+	pop hl
+	ld de, SCREEN_WIDTH * 2
+	add hl, de
+	pop bc
+	inc b
+	dec c
+	jr nz, .loop
+	ret
+
+PlacePartyMonStatus:
+	ld a, [wPartyCount]
+	and a
+	ret z
+	ld c, a
+	ld b, 0
+	hlcoord 3, 2
+.loop
+	push bc
+	push hl
+	call PartyMenuCheckEgg
+	jr z, .next
+	push hl
+	ld a, b
+	ld bc, PARTYMON_STRUCT_LENGTH
+	ld hl, wPartyMon1Status
+	rst AddNTimes
+	ld e, l
+	ld d, h
+	pop hl
+	call GetStatusConditionIndex
+	jr z, .next
+	; get the right tile nums
+	dec a
+	add a
+	ld b, $50 ; PSN tiles are in Tile $50 and $51
+	add b     ;  add the index to $50 to get the right Tiles for the actual Status Condition
+	ld [hli], a
+	inc a
+	ld [hl], a
+
+.next
+	pop hl
+	ld de, SCREEN_WIDTH * 2
+	add hl, de
+	pop bc
+	inc b
+	dec c
+	jr nz, .loop
+	ret
+
+PlacePartyMonTMHMCompatibility:
+	ld a, [wPartyCount]
+	and a
+	ret z
+	ld c, a
+	ld b, 0
+	hlcoord 12, 2
+.loop
+	push bc
+	push hl
+	call PartyMenuCheckEgg
+	jr z, .next
+	push hl
+	ld hl, wPartySpecies
+	ld e, b
+	ld d, 0
+	add hl, de
+	ld a, [hl]
+	ld [wCurPartySpecies], a
+	predef CanLearnTMHMMove
+	pop hl
+	call .PlaceAbleNotAble
+	rst PlaceString
+
+.next
+	pop hl
+	ld de, SCREEN_WIDTH * 2
+	add hl, de
+	pop bc
+	inc b
+	dec c
+	jr nz, .loop
+	ret
+
+.PlaceAbleNotAble:
+	ld a, c
+	and a
+	jr nz, .able
+	ld de, .string_not_able
+	ret
+
+.able
+	ld de, .string_able
+	ret
+
+.string_able
+	db "ABLE@"
+
+.string_not_able
+	db "NOT ABLE@"
+
+PlacePartyMonEvoStoneCompatibility:
+	ld a, [wPartyCount]
+	and a
+	ret z
+	ld c, a
+	ld b, 0
+	hlcoord 12, 2
+.loop
+	push bc
+	push hl
+	call PartyMenuCheckEgg
+	jr z, .next
+	push hl
+	ld a, b
+	ld bc, PARTYMON_STRUCT_LENGTH
+	ld hl, wPartyMon1Species
+	rst AddNTimes
+	ld a, [hl]
+	dec a
+	ld e, a
+	ld d, 0
+	ld hl, EvosAttacksPointers
+	add hl, de
+	add hl, de
+	call .DetermineCompatibility
+	pop hl
+	rst PlaceString
+
+.next
+	pop hl
+	ld de, 2 * SCREEN_WIDTH
+	add hl, de
+	pop bc
+	inc b
+	dec c
+	jr nz, .loop
+	ret
+
+.DetermineCompatibility:
+	ld de, wStringBuffer1
+	ld a, BANK(EvosAttacksPointers)
+	ld bc, 2
+	call FarCopyBytes
+	ld hl, wStringBuffer1
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+	ld de, wStringBuffer1
+	ld a, BANK("Evolutions and Attacks")
+	ld bc, STRING_BUFFER_LENGTH
+	call FarCopyBytes
+	ld hl, wStringBuffer1
+.loop2
+	ld a, [hli]
+	and a
+	jr z, .nope
+	cp EVOLVE_STAT
+	jr nz, .not_four_bytes
+	inc hl
+.not_four_bytes
+	inc hl
+	inc hl
+	cp EVOLVE_ITEM
+	jr nz, .loop2
+	dec hl
+	dec hl
+	ld a, [wCurItem]
+	cp [hl]
+	inc hl
+	inc hl
+	jr nz, .loop2
+	ld de, .string_able
+	ret
+
+.nope
+	ld de, .string_not_able
+	ret
+
+.string_able
+	db "ABLE@"
+.string_not_able
+	db "NOT ABLE@"
+
+PlacePartyMonGender:
+	ld a, [wPartyCount]
+	and a
+	ret z
+	ld c, a
+	ld b, 0
+	hlcoord 12, 2
+.loop
+	push bc
+	push hl
+	call PartyMenuCheckEgg
+	jr z, .next
+	ld [wCurPartySpecies], a
+	push hl
+	ld a, b
+	ld [wCurPartyMon], a
+	xor a
+	ld [wMonType], a
+	call GetGender
+	ld de, .unknown
+	jr c, .got_gender
+	ld de, .male
+	jr nz, .got_gender
+	ld de, .female
+
+.got_gender
+	pop hl
+	rst PlaceString
+
+.next
+	pop hl
+	ld de, 2 * SCREEN_WIDTH
+	add hl, de
+	pop bc
+	inc b
+	dec c
+	jr nz, .loop
+	ret
+
+.male
+	db "♂…MALE@"
+
+.female
+	db "♀…FEMALE@"
+
+.unknown
+	db "…UNKNOWN@"
+
+PartyMenuCheckEgg:
+	ld a, LOW(wPartySpecies)
+	add b
+	ld e, a
+	ld a, HIGH(wPartySpecies)
+	adc 0
+	ld d, a
+	ld a, [de]
+	cp EGG
+	ret
+
+GetPartyMenuQualityIndexes:
+	ld a, [wPartyMenuActionText]
+	and $f0
+	jr nz, .skip
+	ld a, [wPartyMenuActionText]
+	and $f
+	ld e, a
+	ld d, 0
+	ld hl, PartyMenuQualityPointers
+	add hl, de
+	add hl, de
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+	ret
+
+.skip
+	ld hl, PartyMenuQualityPointers.Default
+	ret
+
+INCLUDE "data/party_menu_qualities.asm"
+
+InitPartyMenuGFX:
+	ld hl, wPartyCount
+	ld a, [hli]
+	and a
+	ret z
+	ld c, a
+	xor a
+	ldh [hObjectStructIndex], a
+.loop
+	push bc
+	push hl
+	ld e, MONICON_PARTYMENU
+	farcall LoadMenuMonIcon
+	ldh a, [hObjectStructIndex]
+	inc a
+	ldh [hObjectStructIndex], a
+	pop hl
+	pop bc
+	dec c
+	jr nz, .loop
+	farjp PlaySpriteAnimations
+
+InitPartyMenuWithCancel:
+; with cancel
+	xor a
+	ld [wSwitchMon], a
+	ld de, PartyMenu2DMenuData
+	call Load2DMenuData
+	ld a, [wPartyCount]
+	inc a
+	ld [w2DMenuNumRows], a ; list length
+	dec a
+	ld b, a
+	ld a, [wPartyMenuCursor]
+	and a
+	jr z, .skip
+	inc b
+	cp b
+	jr c, .done
+
+.skip
+	ld a, 1
+
+.done
+	ld [wMenuCursorY], a
+	ld a, A_BUTTON | B_BUTTON
+	ld [wMenuJoypadFilter], a
+	ret
+
+InitPartyMenuNoCancel:
+; no cancel
+	ld de, PartyMenu2DMenuData
+	call Load2DMenuData
+	ld a, [wPartyCount]
+	ld [w2DMenuNumRows], a ; list length
+	ld b, a
+	ld a, [wPartyMenuCursor]
+	and a
+	jr z, .skip
+	inc b
+	cp b
+	jr c, .done
+.skip
+	ld a, 1
+.done
+	ld [wMenuCursorY], a
+	ld a, A_BUTTON | B_BUTTON
+	ld [wMenuJoypadFilter], a
+	ret
+
+PartyMenu2DMenuData:
+	db 1, 0 ; cursor start y, x
+	db 0, 1 ; rows, columns
+	db $60, $00 ; flags
+	dn 2, 0 ; cursor offset
+	db 0 ; accepted buttons
+
+PartyMenuSelect:
+; sets carry if exitted menu.
+	call DoMenuJoypadLoop
+	call PlaceHollowCursor
+	ld a, [wPartyCount]
+	inc a
+	ld b, a
+	ld a, [wMenuCursorY] ; menu selection?
+	cp b
+	jr z, .exitmenu ; CANCEL
+	ld [wPartyMenuCursor], a
+	ldh a, [hJoyLast]
+	ld b, a
+	bit B_BUTTON_F, b
+	jr nz, .exitmenu ; B button
+	ld a, [wMenuCursorY]
+	dec a
+	ld [wCurPartyMon], a
+	ld c, a
+	ld b, 0
+	ld hl, wPartySpecies
+	add hl, bc
+	ld a, [hl]
+	ld [wCurPartySpecies], a
+
+	ld de, SFX_READ_TEXT_2
+	call PlaySFX
+	call WaitSFX
+	and a
+	ret
+
+.exitmenu
+	ld de, SFX_READ_TEXT_2
+	call PlaySFX
+	call WaitSFX
+	scf
+	ret
+
+PlacePartyMenuText:
+	hlcoord 0, 14
+	lb bc, 2, 18
+	call Textbox
+	ld a, [wPartyCount]
+	and a
+	jr nz, .haspokemon
+	ld de, YouHaveNoPKMNString
+	jr .gotstring
+.haspokemon
+	ld a, [wPartyMenuActionText]
+	and $f ; drop high nibble
+	ld hl, PartyMenuStrings
+	ld e, a
+	ld d, 0
+	add hl, de
+	add hl, de
+	ld a, [hli]
+	ld d, [hl]
+	ld e, a
+.gotstring
+	ld a, [wOptions]
+	push af
+	set NO_TEXT_SCROLL, a
+	ld [wOptions], a
+	hlcoord 1, 16 ; Coord
+	rst PlaceString
+	pop af
+	ld [wOptions], a
+	ret
+
+PartyMenuStrings:
+	dw ChooseAMonString
+	dw UseOnWhichPKMNString
+	dw WhichPKMNString
+	dw TeachWhichPKMNString
+	dw MoveToWhereString
+	dw UseOnWhichPKMNString
+	dw ChooseAMonString ; Probably used to be ChooseAFemalePKMNString
+	dw ChooseAMonString ; Probably used to be ChooseAMalePKMNString
+	dw ToWhichPKMNString
+
+ChooseAMonString:
+	db "Choose a #MON.@"
+
+UseOnWhichPKMNString:
+	db "Use on which <PK><MN>?@"
+
+WhichPKMNString:
+	db "Which <PK><MN>?@"
+
+TeachWhichPKMNString:
+	db "Teach which <PK><MN>?@"
+
+MoveToWhereString:
+	db "Move to where?@"
+
+ToWhichPKMNString:
+	db "To which <PK><MN>?@"
+
+YouHaveNoPKMNString:
+	db "You have no <PK><MN>!@"
+
+PrintPartyMenuActionText:
+	ld a, [wCurPartyMon]
+	ld hl, wPartyMonNicknames
+	call GetNickname
+	ld a, [wPartyMenuActionText]
+	and $f
+	ld hl, .MenuActionTexts
+	jr .PrintText
+
+.MenuActionTexts:
+; entries correspond to PARTYMENUTEXT_* constants
+	dw .CuredOfPoisonText
+	dw .BurnWasHealedText
+	dw .WasDefrostedText
+	dw .WokeUpText
+	dw .RidOfParalysisText
+	dw .RecoveredSomeHPText
+	dw .HealthReturnedText
+	dw .RevitalizedText
+	dw .GrewToLevelText
+	dw .CameToItsSensesText
+
+.RecoveredSomeHPText:
+	text_far _RecoveredSomeHPText
+	text_end
+
+.CuredOfPoisonText:
+	text_far _CuredOfPoisonText
+	text_end
+
+.RidOfParalysisText:
+	text_far _RidOfParalysisText
+	text_end
+
+.BurnWasHealedText:
+	text_far _BurnWasHealedText
+	text_end
+
+.WasDefrostedText:
+	text_far _WasDefrostedText
+	text_end
+
+.WokeUpText:
+	text_far _WokeUpText
+	text_end
+
+.HealthReturnedText:
+	text_far _HealthReturnedText
+	text_end
+
+.RevitalizedText:
+	text_far _RevitalizedText
+	text_end
+
+.GrewToLevelText:
+	text_far _GrewToLevelText
+	text_end
+
+.CameToItsSensesText:
+	text_far _CameToItsSensesText
+	text_end
+
+.PrintText:
+	ld e, a
+	ld d, 0
+	add hl, de
+	add hl, de
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+	ld a, [wOptions]
+	push af
+	set NO_TEXT_SCROLL, a
+	ld [wOptions], a
+	call PrintText
+	pop af
+	ld [wOptions], a
+	ret
+
+LoadStatusIconSet:
+	push bc
+	push hl
+	; status index in a
+	ld a, $1 ; PSN Index
+	ld hl, StatusIconGFX ; Uses the Light Gray pixels, aka Pal Color 2
+	ld bc, 2 * LEN_2BPP_TILE ; Status GFX is 2 Tiles Wide
+	rst AddNTimes
+	ld d, h
+	ld e, l
+	ld hl, vTiles2 tile $50 ; Destination Tile address
+	lb bc, BANK(StatusIconGFX), 2 ; bank in 'b', number of Tiles in 'c'
+	call Request2bpp
+
+	ld a, $2 ; PAR Index
+	ld hl, StatusIconGFX ; Uses the Light Gray pixels, aka Pal Color 2
+	ld bc, 2 * LEN_2BPP_TILE ; Status GFX is 2 Tiles Wide
+	rst AddNTimes
+	ld d, h
+	ld e, l
+	ld hl, vTiles2 tile $52
+	lb bc, BANK(StatusIconGFX), 2 ; bank in 'b', number of Tiles in 'c'
+	call Request2bpp
+
+	ld a, $3 ; SLP
+	ld hl, StatusIconGFX ; Uses the Light Gray pixels, aka Pal Color 2
+	ld bc, 2 * LEN_2BPP_TILE ; Status GFX is 2 Tiles Wide
+	rst AddNTimes
+	ld d, h
+	ld e, l
+	ld hl, vTiles2 tile $54
+	lb bc, BANK(StatusIconGFX), 2 ; bank in 'b', number of Tiles in 'c'
+	call Request2bpp
+
+	ld a, $4 ; BRN
+	ld hl, EnemyStatusIconGFX ; Uses the Dark Gray pixels, aka Pal Color 3
+	ld bc, 2 * LEN_2BPP_TILE ; Status GFX is 2 Tiles Wide
+	rst AddNTimes
+	ld d, h
+	ld e, l
+	ld hl, vTiles2 tile $56
+	lb bc, BANK(EnemyStatusIconGFX), 2 ; bank in 'b', number of Tiles in 'c'
+	call Request2bpp
+
+	ld a, $5 ; FRZ
+	ld hl, EnemyStatusIconGFX ; Uses the Dark Gray pixels, aka Pal Color 3
+	ld bc, 2 * LEN_2BPP_TILE ; Status GFX is 2 Tiles Wide
+	rst AddNTimes
+	ld d, h
+	ld e, l
+	ld hl, vTiles2 tile $58
+	lb bc, BANK(EnemyStatusIconGFX), 2 ; bank in 'b', number of Tiles in 'c'
+	call Request2bpp
+
+	ld a, $6 ; FNT Index
+	ld hl, StatusIconGFX ; FNT is only in the Player's set of Icons aka gfx\battle\status.png
+	ld bc, 2 * LEN_2BPP_TILE ; Status GFX is 2 Tiles Wide
+	rst AddNTimes
+	ld d, h
+	ld e, l
+	ld hl, vTiles2 tile $5a
+	lb bc, BANK(StatusIconGFX), 2 ; bank in 'b', number of Tiles in 'c'
+	call Request2bpp
+	pop hl
+	pop bc
+	ret
